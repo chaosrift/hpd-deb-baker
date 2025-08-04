@@ -19,6 +19,14 @@ on:
           - ubuntu-22.04
           - github-linux64-ubuntu-latest-8core  # Large GitHub-hosted runner
           - github-arm64-ubuntu-24.04-8core  # ARM64 self-hosted runner
+      ubuntu_version:
+        description: 'Ubuntu version for Docker image (e.g., 22.04, 24.04)'
+        required: false
+        type: choice
+        default: '22.04'
+        options:
+          - '22.04'
+          - '24.04'
       test_installation:
         description: 'Test package installation'
         required: false
@@ -27,7 +35,7 @@ on:
 jobs:
   build:
     name: Call HPD DevSetup Action
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.inputs.runner || 'ubuntu-latest' }}
 
     steps:
       - name: Checkout HPD DevSetup repository
@@ -41,7 +49,7 @@ jobs:
       - name: Call HPD DevSetup Action
         uses: ./hpd_dpsetup
         with:
-          runner: ${{ github.event.inputs.runner || 'ubuntu-latest' }}
+          ubuntu-version: ${{ github.event.inputs.ubuntu_version || '22.04' }}
           staging-dir: '/tmp/staging'
           upload-artifacts: 'true'
           test-installation: ${{ github.event.inputs.test_installation || 'true' }}
