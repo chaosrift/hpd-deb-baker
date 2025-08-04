@@ -1,6 +1,6 @@
 name: Bake HPD Development Environment Package
 
-on:
+
   # push:
   #   branches: [ main, develop ]
   #   tags: [ 'v*' ]
@@ -8,21 +8,22 @@ on:
   #   branches: [ main ]
   workflow_dispatch:
     inputs:
-      ubuntu_version:
-        description: 'Ubuntu version to build for'
+      runner:
+        description: 'Specify the runner (e.g., ubuntu-latest, windows-latest, self-hosted-runner).'
         required: false
-        default: '22.04'
         type: choice
+        default: 'ubuntu-latest'
         options:
-          - '20.04'
-          - '22.04'
-          - '24.04'
+          - ubuntu-latest
+          - ubuntu-24.04
+          - ubuntu-22.04
+          - github-linux64-ubuntu-latest-8core  # Large GitHub-hosted runner
+          - github-arm64-ubuntu-24.04-8core  # ARM64 self-hosted runner
       test_installation:
         description: 'Test package installation'
         required: false
         default: true
         type: boolean
-
 jobs:
   build:
     name: Call HPD DevSetup Action
@@ -40,7 +41,7 @@ jobs:
       - name: Call HPD DevSetup Action
         uses: ./hpd_dpsetup
         with:
-          ubuntu-version: ${{ github.event.inputs.ubuntu_version || '22.04' }}
+          runner: ${{ github.event.inputs.runner || 'ubuntu-latest' }}
           staging-dir: '/tmp/staging'
           upload-artifacts: 'true'
           test-installation: ${{ github.event.inputs.test_installation || 'true' }}
