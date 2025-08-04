@@ -1,4 +1,4 @@
-name: Call HPD Deb Baker
+name: Bake HPD Development Environment Package
 
 on:
   # push:
