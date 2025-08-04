@@ -1,0 +1,51 @@
+name: Call HPD Deb Baker
+
+on:
+  # push:
+  #   branches: [ main, develop ]
+  #   tags: [ 'v*' ]
+  # pull_request:
+  #   branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      ubuntu_version:
+        description: 'Ubuntu version to build for'
+        required: false
+        default: '22.04'
+        type: choice
+        options:
+          - '20.04'
+          - '22.04'
+          - '24.04'
+      test_installation:
+        description: 'Test package installation'
+        required: false
+        default: true
+        type: boolean
+
+jobs:
+  build:
+    name: Call HPD DevSetup Action
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout HPD DevSetup repository
+        uses: actions/checkout@v4
+        with:
+          repository: diverger/hpd_dpsetup
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          path: hpd_dpsetup
+
+      - name: Call HPD DevSetup Action
+        uses: ./hpd_dpsetup
+        with:
+          ubuntu-version: ${{ github.event.inputs.ubuntu_version || '22.04' }}
+          staging-dir: '/tmp/staging'
+          upload-artifacts: 'true'
+          test-installation: ${{ github.event.inputs.test_installation || 'true' }}
+          artifact-retention-days: '30'
+
+      - name: Display results
+        run: |
+          echo "✅ HPD DevSetup action completed successfully!"
+          echo "📦 Check artifacts for generated packages"
