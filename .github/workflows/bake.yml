@@ -45,6 +45,7 @@ jobs:
           upload-artifacts: 'true'
           test-installation: ${{ github.event.inputs.test_installation || 'true' }}
           artifact-retention-days: '30'
+          working-dir: hpd_dpsetup
 
       - name: Display results
         run: |
