@@ -34,6 +34,7 @@ jobs:
         with:
           repository: diverger/hpd_dpsetup
           token: ${{ secrets.GH_ACCESS_TOKEN }}
+          ref: main
           path: hpd_dpsetup
 
       - name: Call HPD DevSetup Action
